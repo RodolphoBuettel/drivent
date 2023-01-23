@@ -11,6 +11,8 @@ export type ViaCEPAddress = {
   uf: string,
 };
 
+export type ViaCepAddressResult = Omit<ViaCEPAddress, "localidade"> & { cidade: string };
+
 export type RequestError = {
   status: number,
   data: object | null,
