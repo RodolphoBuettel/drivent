@@ -22,7 +22,7 @@ describe("GET /tickets/types", () => {
   it("should respond with status 401 if no token is given", async () => {
     const response = await server.get("/tickets/types");
 
-    expect(response.status).toBe(httpStatus.NOT_FOUND);
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
 
   it("should respond with status 401 if given token is not valid", async () => {
@@ -30,7 +30,7 @@ describe("GET /tickets/types", () => {
 
     const response = await server.get("/tickets/types").set("Authorization", `Bearer ${token}`);
 
-    expect(response.status).toBe(httpStatus.NOT_FOUND);
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
 
   it("should respond with status 401 if there is no session for given token", async () => {
@@ -39,7 +39,7 @@ describe("GET /tickets/types", () => {
 
     const response = await server.get("/tickets/types").set("Authorization", `Bearer ${token}`);
 
-    expect(response.status).toBe(httpStatus.NOT_FOUND);
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
 
   describe("when token is valid", () => {
@@ -48,7 +48,7 @@ describe("GET /tickets/types", () => {
 
       const response = await server.get("/tickets/types").set("Authorization", `Bearer ${token}`);
 
-      expect(response.body).toEqual({});
+      expect(response.body).toEqual([]);
     });
 
     it("should respond with status 200 and with existing TicketTypes data", async () => {
@@ -58,11 +58,11 @@ describe("GET /tickets/types", () => {
 
       const response = await server.get("/tickets/types").set("Authorization", `Bearer ${token}`);
 
-      expect(response.status).toBe(httpStatus.NOT_FOUND);
+      expect(response.status).toBe(httpStatus.OK);
       if(!response.body[0]) {
         return response.body;
       }
-      expect(response.body).toBe([
+      expect(response.body).toStrictEqual([
         {
           id: ticketType.id,
           name: ticketType.name,
@@ -81,7 +81,7 @@ describe("GET /tickets", () => {
   it("should respond with status 401 if no token is given", async () => {
     const response = await server.get("/tickets");
 
-    expect(response.status).toBe(httpStatus.NOT_FOUND);
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
 
   it("should respond with status 401 if given token is not valid", async () => {
@@ -89,7 +89,7 @@ describe("GET /tickets", () => {
 
     const response = await server.get("/tickets").set("Authorization", `Bearer ${token}`);
 
-    expect(response.status).toBe(httpStatus.NOT_FOUND);
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
 
   it("should respond with status 401 if there is no session for given token", async () => {
@@ -98,7 +98,7 @@ describe("GET /tickets", () => {
 
     const response = await server.get("/tickets").set("Authorization", `Bearer ${token}`);
 
-    expect(response.status).toBe(httpStatus.NOT_FOUND);
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
 
   describe("when token is valid", () => {
@@ -129,7 +129,7 @@ describe("GET /tickets", () => {
 
       const response = await server.get("/tickets").set("Authorization", `Bearer ${token}`);
 
-      expect(response.status).toEqual(httpStatus.NOT_FOUND);
+      expect(response.status).toEqual(httpStatus.OK);
       if(!response.body[0]) {
         return response.body;
       }
@@ -158,7 +158,7 @@ describe("POST /tickets", () => {
   it("should respond with status 401 if no token is given", async () => {
     const response = await server.post("/tickets");
 
-    expect(response.status).toBe(httpStatus.NOT_FOUND);
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
 
   it("should respond with status 401 if given token is not valid", async () => {
@@ -166,7 +166,7 @@ describe("POST /tickets", () => {
 
     const response = await server.post("/tickets").set("Authorization", `Bearer ${token}`);
 
-    expect(response.status).toBe(httpStatus.NOT_FOUND);
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
 
   it("should respond with status 401 if there is no session for given token", async () => {
@@ -175,7 +175,7 @@ describe("POST /tickets", () => {
 
     const response = await server.post("/tickets").set("Authorization", `Bearer ${token}`);
 
-    expect(response.status).toBe(httpStatus.NOT_FOUND);
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
 
   describe("when token is valid", () => {
@@ -214,7 +214,7 @@ describe("POST /tickets", () => {
         .set("Authorization", `Bearer ${token}`)
         .send({ ticketTypeId: ticketType.id });
 
-      expect(response.status).toEqual(httpStatus.NOT_FOUND);
+      expect(response.status).toEqual(httpStatus.OK);
       if(!response.body[0]) {
         return response.body;
       }
@@ -250,7 +250,7 @@ describe("POST /tickets", () => {
       const afterCount = await prisma.ticket.count();
 
       expect(beforeCount).toEqual(0);
-      expect(afterCount).toBe(0);
+      expect(afterCount).toEqual(1);
     });
   });
 });
