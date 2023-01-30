@@ -23,17 +23,16 @@ async function getTicket(userId: number) {
 
 async function insertTicket(body: { ticketTypeId: number }, userId: number) {
   const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
- 
-  if (!body.ticketTypeId || !enrollment) {
-    throw { name: "NotFoundError" };
+  const { ticketTypeId } = body; 
+  if (!ticketTypeId || !enrollment) {
+    throw notFoundError();
   }
 
-  const newTicket = { 
-    ...body, status: "RESERVED", enrollmentId: enrollment.id
-  } as 
-     {
-      status: TicketStatus, ticketTypeId: number, enrollmentId: number
-    };
+  const newTicket = {
+    ticketTypeId,
+    enrollmentId: enrollment.id,
+    status: TicketStatus.RESERVED
+  };
   return await createAnewTicket(newTicket);
 }
 
