@@ -29,7 +29,7 @@ describe("GET /payments", () => {
   it("should respond with status 401 if no token is given", async () => {
     const response = await server.get("/payments");
 
-    expect(response.status).toBe(httpStatus.NOT_FOUND);
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
 
   it("should respond with status 401 if given token is not valid", async () => {
@@ -37,7 +37,7 @@ describe("GET /payments", () => {
 
     const response = await server.get("/payments").set("Authorization", `Bearer ${token}`);
 
-    expect(response.status).toBe(httpStatus.NOT_FOUND);
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
 
   it("should respond with status 401 if there is no session for given token", async () => {
@@ -46,7 +46,7 @@ describe("GET /payments", () => {
 
     const response = await server.get("/payments").set("Authorization", `Bearer ${token}`);
 
-    expect(response.status).toBe(httpStatus.NOT_FOUND);
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
 
   describe("when token is valid", () => {
@@ -55,7 +55,7 @@ describe("GET /payments", () => {
 
       const response = await server.get("/payments").set("Authorization", `Bearer ${token}`);
 
-      expect(response.status).toEqual(httpStatus.NOT_FOUND);
+      expect(response.status).toEqual(httpStatus.BAD_REQUEST);
     });
 
     it("should respond with status 404 when given ticket doesnt exist", async () => {
@@ -80,7 +80,7 @@ describe("GET /payments", () => {
 
       const response = await server.get(`/payments?ticketId=${ticket.id}`).set("Authorization", `Bearer ${token}`);
       
-      expect(response.status).toEqual(httpStatus.NOT_FOUND);
+      expect(response.status).toEqual(httpStatus.UNAUTHORIZED);
     });
 
     it("should respond with status 200 and with payment data", async () => {
@@ -94,7 +94,7 @@ describe("GET /payments", () => {
 
       const response = await server.get(`/payments?ticketId=${ticket.id}`).set("Authorization", `Bearer ${token}`);
 
-      expect(response.status).toBe(httpStatus.NOT_FOUND);
+      expect(response.status).toBe(httpStatus.OK);
       if(!response.body[0]) {
         return response.body;
       }
@@ -115,7 +115,7 @@ describe("POST /payments/process", () => {
   it("should respond with status 401 if no token is given", async () => {
     const response = await server.post("/payments/process");
 
-    expect(response.status).toBe(httpStatus.NOT_FOUND);
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
 
   it("should respond with status 401 if given token is not valid", async () => {
@@ -123,7 +123,7 @@ describe("POST /payments/process", () => {
 
     const response = await server.post("/payments/process").set("Authorization", `Bearer ${token}`);
 
-    expect(response.status).toBe(httpStatus.NOT_FOUND);
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
 
   it("should respond with status 401 if there is no session for given token", async () => {
@@ -132,7 +132,7 @@ describe("POST /payments/process", () => {
 
     const response = await server.post("/payments/process").set("Authorization", `Bearer ${token}`);
 
-    expect(response.status).toBe(httpStatus.NOT_FOUND);
+    expect(response.status).toBe(httpStatus.UNAUTHORIZED);
   });
 
   describe("when token is valid", () => {
@@ -147,7 +147,7 @@ describe("POST /payments/process", () => {
 
       const response = await server.post("/payments/process").set("Authorization", `Bearer ${token}`).send(body);
 
-      expect(response.status).toEqual(httpStatus.NOT_FOUND);
+      expect(response.status).toEqual(httpStatus.BAD_REQUEST);
     });
 
     it("should respond with status 400 if body param cardData is missing", async () => {
@@ -161,7 +161,7 @@ describe("POST /payments/process", () => {
 
       const response = await server.post("/payments/process").set("Authorization", `Bearer ${token}`).send(body);
 
-      expect(response.status).toEqual(httpStatus.NOT_FOUND);
+      expect(response.status).toEqual(httpStatus.BAD_REQUEST);
     });
 
     it("should respond with status 404 when given ticket doesnt exist", async () => {
@@ -190,7 +190,7 @@ describe("POST /payments/process", () => {
 
       const response = await server.post("/payments/process").set("Authorization", `Bearer ${token}`).send(body);
 
-      expect(response.status).toEqual(httpStatus.NOT_FOUND);
+      expect(response.status).toEqual(httpStatus.UNAUTHORIZED);
     });
 
     it("should respond with status 200 and with payment data", async () => {
@@ -204,7 +204,7 @@ describe("POST /payments/process", () => {
 
       const response = await server.post("/payments/process").set("Authorization", `Bearer ${token}`).send(body);
 
-      expect(response.status).toEqual(httpStatus.NOT_FOUND);
+      expect(response.status).toEqual(httpStatus.OK);
       if(!response.body[0]) {
         return response.body;
       }
@@ -234,7 +234,7 @@ describe("POST /payments/process", () => {
       const afterCount = await prisma.payment.count();
 
       expect(beforeCount).toEqual(0);
-      expect(afterCount).toEqual(0);
+      expect(afterCount).toEqual(1);
     });
 
     it("should set ticket status as PAID", async () => {
@@ -249,7 +249,7 @@ describe("POST /payments/process", () => {
 
       const updatedTicket = await prisma.ticket.findUnique({ where: { id: ticket.id } });
 
-      expect(updatedTicket.status).toEqual(TicketStatus.RESERVED);
+      expect(updatedTicket.status).toEqual(TicketStatus.PAID);
     });
   });
 });
