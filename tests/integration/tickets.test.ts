@@ -187,7 +187,7 @@ describe("POST /tickets", () => {
 
       const response = await server.post("/tickets").set("Authorization", `Bearer ${token}`).send({});
 
-      expect(response.status).toEqual(httpStatus.NOT_FOUND);
+      expect(response.status).toEqual(httpStatus.BAD_REQUEST);
     });
 
     it("should respond with status 404 when user doesnt have enrollment yet", async () => {
@@ -214,7 +214,7 @@ describe("POST /tickets", () => {
         .set("Authorization", `Bearer ${token}`)
         .send({ ticketTypeId: ticketType.id });
 
-      expect(response.status).toEqual(httpStatus.OK);
+      expect(response.status).toEqual(httpStatus.CREATED);
       if(!response.body[0]) {
         return response.body;
       }
