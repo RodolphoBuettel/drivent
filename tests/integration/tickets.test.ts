@@ -236,13 +236,11 @@ describe("POST /tickets", () => {
         updatedAt: expect.any(String),
       });
     });
-
     it("should insert a new ticket in the database", async () => {
       const user = await createUser();
       const token = await generateValidToken(user);
       await createEnrollmentWithAddress(user);
       const ticketType = await createTicketType();
-
       const beforeCount = await prisma.ticket.count();
 
       await server.post("/tickets").set("Authorization", `Bearer ${token}`).send({ ticketTypeId: ticketType.id });
