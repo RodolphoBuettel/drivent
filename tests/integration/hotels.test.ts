@@ -1,11 +1,11 @@
 import app, { init } from "@/app";
+import supertest from "supertest";
 import faker from "@faker-js/faker";
 import { TicketStatus } from "@prisma/client";
 import httpStatus from "http-status";
 import * as jwt from "jsonwebtoken";
-import supertest from "supertest";
-import { createEnrollmentWithAddress, createUser, createTicketType, createTicket, createPayment } from "../factories";
-import { cleanDb, generateValidToken } from "../helpers";
+import { createEnrollmentWithAddress, createUser, createPayment, createTicketType, createTicket } from "../factories";
+import { generateValidToken, cleanDb } from "../helpers";
 import { createHotel } from "../factories/hotels-factory";
 
 beforeAll(async () => {
